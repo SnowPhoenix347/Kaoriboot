@@ -4,21 +4,21 @@ import Kaori.SpringBoot.kaoriboot.models.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceContext;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
-@RequiredArgsConstructor
 public class UserDaoImpl implements UserDao {
     @PersistenceContext
     private final EntityManager entityManager;
+
+    @Autowired
+    public UserDaoImpl(EntityManagerFactory entityManagerFactory) {
+        this.entityManager = entityManagerFactory.createEntityManager();
+    }
 
     @Override
     public List<User> getAll() {
@@ -26,7 +26,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Optional<User> get(Integer id) {
+    public Optional<User> get(int id) {
         User user = entityManager.find(User.class, id);
         return Optional.ofNullable(user);
     }
@@ -42,7 +42,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(int id) {
         Optional<User> user = get(id);
         user.ifPresent(entityManager::remove);
     }
